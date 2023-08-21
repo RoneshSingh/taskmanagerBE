@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.tekeo.tasksmanager.model.Task;
 
 @Repository
-public interface TaskRepository extends MongoRepository<Task, Long> {
+public interface TaskRepository extends MongoRepository<Task, String> {
 
     List<Task> findByUserName(String userName);
 

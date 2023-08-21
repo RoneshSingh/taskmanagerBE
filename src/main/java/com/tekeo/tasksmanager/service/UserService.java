@@ -16,6 +16,10 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepo;
+
+    public UserService(UserRepository userRepo){
+        this.userRepo= userRepo;
+    }
 	
 	
 	//Get All Users

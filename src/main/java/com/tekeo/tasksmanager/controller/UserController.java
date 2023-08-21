@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.taskmanager.user.model.User;
-import com.taskmanager.user.service.UserService;
-import com.taskmanager.user.validation.UserValidation;
+import com.tekeo.tasksmanager.model.User;
+import com.tekeo.tasksmanager.service.UserService;
+
+
 
 @RestController
 @RequestMapping("/users")
@@ -26,6 +27,10 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+    public UserController(UserService userService){
+        this.userService = userService;
+    }
 	
 	// REGISTER NEW USER
 	@CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })

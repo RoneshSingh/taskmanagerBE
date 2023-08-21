@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.taskmanager.user.model.Task;
+import com.tekeo.tasksmanager.model.Task;
+import com.tekeo.tasksmanager.service.TaskService;
 
-import com.taskmanager.user.service.TaskService;
 
 @RestController
 @RequestMapping("/tasks")
@@ -25,6 +25,10 @@ public class TaskController {
 
 	  @Autowired
 	    private TaskService taskService;
+
+        public TaskController(TaskService taskService){
+            this.taskService = taskService;
+        }
 
 	  //CREATING NEW TASK
 	    @CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })

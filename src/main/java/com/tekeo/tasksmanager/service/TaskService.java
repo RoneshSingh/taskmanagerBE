@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.taskmanager.user.model.Task;
-import com.taskmanager.user.model.User;
-import com.taskmanager.user.repository.TaskRepository;
-import com.taskmanager.user.repository.UserRepository;
+import com.tekeo.tasksmanager.model.Task;
+import com.tekeo.tasksmanager.model.User;
+import com.tekeo.tasksmanager.repository.TaskRepository;
+import com.tekeo.tasksmanager.repository.UserRepository;
+
+
 
 @Service
 public class TaskService {
@@ -18,6 +20,12 @@ public class TaskService {
 
 	    @Autowired
 	    private UserRepository userRepo;
+
+
+        public TaskService(TaskRepository taskRepo, UserRepository userRepo){
+            this.taskRepo = taskRepo;
+            this.userRepo = userRepo;
+        }
 
 	    // Create a task and associate it with a user
 	    public Task createTaskForUser(String userName, Task task) {

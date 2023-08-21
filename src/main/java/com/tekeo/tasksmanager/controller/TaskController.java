@@ -3,6 +3,9 @@ package com.tekeo.tasksmanager.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,38 +15,66 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tekeo.tasksmanager.model.Task;
-import com.tekeo.tasksmanager.service.TaskService;
+import com.taskmanager.user.model.Task;
+
+import com.taskmanager.user.service.TaskService;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/tasks")
 public class TaskController {
 
-    @Autowired
-    private TaskService service;
+	  @Autowired
+	    private TaskService taskService;
 
-    TaskController(TaskService service) {
-        this.service = service;
-    }
+	  //CREATING NEW TASK
+	    @CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })
+	    @PostMapping("/{userName}/create")
+	    public ResponseEntity<?> createTaskForUser(@PathVariable String userName, @RequestBody Task task) {
+	        Task createdTask = taskService.createTaskForUser(userName, task);
+	        if (createdTask != null) {
+	            return ResponseEntity.ok("Task created successfully.");
+	        } else {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");
+	        }
+	    }
 
-    @GetMapping("/allTask")
-    public List<Task> getTask() {
-        return service.getAllTasks();
-    }
+	    //GETTING TASK WITH TASKID
+	    @CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })
+	    @GetMapping("/{taskID}")
+	    public ResponseEntity<?> getTaskById(@PathVariable String taskID) {
+	        Task task = taskService.getTaskById(taskID);
+	        if (task != null) {
+	            return ResponseEntity.ok(task);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found.");
+	        }
+	    }
 
-    @PostMapping("/addTask")
-    public Task postTask(@RequestBody Task request) {
-        return service.postTask(request);
-    }
+	    //UPDATING TASK WITH TASKID
+	    @CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })
+	    @PutMapping("/{taskID}/update")
+	    public ResponseEntity<?> updateTask(@PathVariable String taskID, @RequestBody Task updatedTask) {
+	        Task task = taskService.updateTask(taskID, updatedTask);
+	        if (task != null) {
+	            return ResponseEntity.ok("Task updated successfully.");
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found.");
+	        }
+	    }
 
-    @PutMapping("/editTask/{id}")
-    public Task editTask(@RequestBody Task request, @PathVariable("id") Long id) {
-        return service.editTask(id, request);
-    }
-
-    @DeleteMapping("/deleteTask/{id}")
-    public String deleteTask(@PathVariable("id") Long id) {
-        return service.deleteTask(id);
-    }
-
+	    //DELETING TASK WITH TASKID
+	    @CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })
+	    @DeleteMapping("/{taskID}/delete")
+	    public ResponseEntity<String> deleteTask(@PathVariable String taskID) {
+	        taskService.deleteTask(taskID);
+	        return ResponseEntity.ok("Task deleted successfully.");
+	    }
+	    
+	    //GETTING TASK RELATED TO USER
+	    @CrossOrigin(origins = "http://localhost:5173/", allowedHeaders = { "Content-Type" })
+	    @GetMapping("/user/{userName}")
+	    public ResponseEntity<List<Task>> getAllTasksForUser(@PathVariable String userName) {
+	        List<Task> tasks = taskService.getAllTasksForUser(userName);
+	        return ResponseEntity.ok(tasks);
+	    }
 }

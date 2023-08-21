@@ -10,19 +10,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Document
+
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Document(collection = "tasks")
 public class Task {
-    @Id
-    private Long taskId;
-    private String title;
-    private String description;
-    private String date;
-    private Boolean completed;
+
+	@Id
+    private String taskID;
+    private String taskTitle;
+    private String taskDesc;
+    private String taskDate;
+    private String taskDueDate;
+    private String userName; 
 
 }

@@ -5,43 +5,64 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tekeo.tasksmanager.model.Task;
-import com.tekeo.tasksmanager.repository.TaskRepository;
+import com.taskmanager.user.model.Task;
+import com.taskmanager.user.model.User;
+import com.taskmanager.user.repository.TaskRepository;
+import com.taskmanager.user.repository.UserRepository;
 
 @Service
 public class TaskService {
 
-    @Autowired
-    private TaskRepository repository;
+	  @Autowired
+	    private TaskRepository taskRepo;
 
-    TaskService(TaskRepository repository) {
-        this.repository = repository;
-    }
+	    @Autowired
+	    private UserRepository userRepo;
 
-    public List<Task> getAllTasks() {
-        return repository.findAll();
-    }
+	    // Create a task and associate it with a user
+	    public Task createTaskForUser(String userName, Task task) {
+	        User user = userRepo.findByUserName(userName);
+	        if (user != null) {
+	            task.setUserName(userName);
+	            taskRepo.save(task);
+	            return task;
+	        }
+	        return null;
+	    }
 
-    public Task postTask(Task request) {
-        return repository.save(request);
-    }
+	    // Retrieve a task by taskID
+	    public Task getTaskById(String taskID) {
+	        return taskRepo.findById(taskID).orElse(null);
+	    }
 
-    public Task editTask(Long id, Task request) {
-        Task editedTask = repository.findById(id).orElse(null);
+	    // Update a task
+	    public Task updateTask(String taskID, Task updatedTask) {
+	        Task task = taskRepo.findById(taskID).orElse(null);
+	        if (task != null) {
+	            task.setTaskTitle(updatedTask.getTaskTitle());
+	            task.setTaskDesc(updatedTask.getTaskDesc());
+	            task.setTaskDate(updatedTask.getTaskDate());
+	            task.setTaskDueDate(updatedTask.getTaskDueDate());
+	            return taskRepo.save(task);
+	        }
+	        return null;
+	    }
 
-        if (editedTask != null) {
-            editedTask.setTitle(request.getTitle());
-            editedTask.setDate(request.getDate());
-            editedTask.setDescription(request.getDescription());
-            editedTask.setCompleted(request.getCompleted());
+	    // Delete a task
+	    public void deleteTask(String taskID) {
+	        Task task = taskRepo.findById(taskID).orElse(null);
+	        if (task != null) {
+	            User user = userRepo.findByTasksContaining(task);
+	            if (user != null) {
+	                user.getTasks().remove(task);
+	                userRepo.save(user);
+	            }
+	            taskRepo.delete(task);
+	        }
+	    }
 
-        }
-        return repository.save(editedTask);
-    }
-
-    public String deleteTask(Long id) {
-        repository.deleteById(id);
-        return "Task Deleted";
-    }
-
+	    public List<Task> getAllTasksForUser(String userName) {
+	        return taskRepo.findByUserName(userName);
+	    }
+	
 }
